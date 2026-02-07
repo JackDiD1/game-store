@@ -9,7 +9,6 @@ pillow==12.1.0
 psycopg2-binary==2.9.11
 sqlparse==0.5.5
 whitenoise==6.11.0
-asgiref==3.7.2
 beautifulsoup4==4.12.3
 blinker==1.7.0
 Brlapi==0.8.5
