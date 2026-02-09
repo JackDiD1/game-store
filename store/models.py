@@ -96,7 +96,7 @@ def import_products_from_excel(sender, instance, created, **kwargs):
     imported_names = []  # список товаров из файла
 
     for row in sheet.iter_rows(min_row=2, values_only=True):
-        name, price, stock, category_name, image_name = row
+        name, price, stock = row
 
         if not name:
             continue
