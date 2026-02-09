@@ -107,11 +107,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
@@ -130,7 +125,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -140,3 +134,12 @@ DEBUG = False
 ALLOWED_HOSTS_ENV = os.environ.get("ALLOWED_HOSTS")
 
 ALLOWED_HOSTS = ["game-store-urou.onrender.com", "localhost", "127.0.0.1"]
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
