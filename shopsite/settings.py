@@ -143,4 +143,25 @@ DEBUG = False
 
 ALLOWED_HOSTS_ENV = os.environ.get("ALLOWED_HOSTS")
 
-ALLOWED_HOSTS = ["game-store-urou.onrender.com", "localhost", "127.0.0.1"]
+#ALLOWED_HOSTS = ["game-store-urou.onrender.com", "localhost", "127.0.0.1"]
+
+import logging
+
+ALLOWED_HOSTS = ['*']  # временно для отладки
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
