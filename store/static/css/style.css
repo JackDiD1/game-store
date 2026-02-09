@@ -253,3 +253,15 @@ a:hover {
     border-color: #ff8c1a;
     color: #1f1f24 !important;
 }
+
+.btn-outline-dark {
+    background: linear-gradient(45deg, #ff8c1a, #ffd166);
+    border-color: #ff8c1a;
+    color: #1f1f24 !important;  
+}
+
+.btn-outline-dark.active {
+    background: linear-gradient(45deg, #ff8c1a, #ffd166);
+    border-color: #ff8c1a;
+    color: #1f1f24 !important;
+}
