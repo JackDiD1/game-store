@@ -17,6 +17,8 @@ def product_list(request):
     if category_id:
         products = products.filter(categories__id=category_id)
 
+    products = products.order_by('name')
+
     categories = Category.objects.all()
 
     menu_items = MenuItem.objects.filter(is_active=True)
