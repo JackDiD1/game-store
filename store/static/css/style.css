@@ -265,3 +265,7 @@ a:hover {
     border-color: #ff8c1a;
     color: #1f1f24 !important;
 }
+
+.text-muted {
+    color:  #ff8c1a
+}
