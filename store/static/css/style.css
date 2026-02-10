@@ -266,6 +266,8 @@ a:hover {
     color: #1f1f24 !important;
 }
 
-.text-muted {
-    color:  #ff8c1a
+.price {
+    color: #ff8c1a;
+    font-weight: 700;
+    font-size: 18px;
 }
