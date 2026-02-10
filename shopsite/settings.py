@@ -14,10 +14,6 @@ import os
 import dj_database_url
 from pathlib import Path
 
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
-
 cloudinary.config(secure=True)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
