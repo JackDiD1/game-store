@@ -9,23 +9,28 @@ def product_list(request):
 
     products = Product.objects.all()
 
+    # Главные категории
     main_categories = Category.objects.filter(parent__isnull=True)
 
     selected_main = None
     subcategories = Category.objects.none()
 
+    # Фильтр по главной категории
     if type_name:
-        selected_main = Category.objects.filter(name=type_name, parent__isnull=True).first()
+        selected_main = Category.objects.filter(
+            name=type_name,
+            parent__isnull=True
+        ).first()
+
         if selected_main:
             subcategories = selected_main.children.all()
-            products = products.filter(categories__in=subcategories)
+            products = products.filter(categories__parent=selected_main)
 
+    # Фильтр по подкатегории
     if category_id:
         products = products.filter(categories__id=category_id)
 
-    products = products.distinct()
-
-    products = products.order_by('name')
+    products = products.distinct().order_by('name')
 
     return render(request, 'store/product_list.html', {
         'products': products,
