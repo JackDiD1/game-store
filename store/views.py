@@ -6,8 +6,18 @@ from django.shortcuts import get_object_or_404
 def product_list(request):
     query = request.GET.get('q')
     category_id = request.GET.get('category')
+    type_filter = request.GET.get('type')
 
     products = Product.objects.all()
+
+    if type_filter == 'disks':
+        products = products.filter(categories__name='Диски')
+
+    elif type_filter == 'consoles':
+        products = products.filter(categories__name='Консоли')
+
+    elif type_filter == 'accessories':
+        products = products.filter(categories__name='Аксессуары')
 
     # Поиск по названию
     if query:

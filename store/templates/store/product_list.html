@@ -4,17 +4,22 @@
 
 {% block content %}
 
-<h1 class="mb-4">Товары</h1>
+<div class="top-menu mb-4 text-center">
+    <a href="{% url 'product_list' %}?type=disks"
+       class="menu-link {% if request.GET.type == 'disks' %}active{% endif %}">
+        Диски
+    </a>
 
-<form method="get" class="mb-4">
-    <div class="input-group">
-        <input type="text" name="q" class="form-control" placeholder="Поиск..." value="{{ query }}">
-        {% if selected_category %}
-            <input type="hidden" name="category" value="{{ selected_category }}">
-        {% endif %}
-        <button class="btn btn-primary">Найти</button>
-    </div>
-</form>
+    <a href="{% url 'product_list' %}?type=consoles"
+       class="menu-link {% if request.GET.type == 'consoles' %}active{% endif %}">
+        Консоли
+    </a>
+
+    <a href="{% url 'product_list' %}?type=accessories"
+       class="menu-link {% if request.GET.type == 'accessories' %}active{% endif %}">
+        Аксессуары
+    </a>
+</div>
 
 <div class="mb-4">
     <a href="?" class="btn btn-outline-dark btn-sm {% if not selected_category %}active{% endif %}">
