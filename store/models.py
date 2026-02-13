@@ -7,7 +7,14 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 class Category(models.Model):
-    name = models.CharField("Категория", max_length=100, unique=True)
+    name = models.CharField(max_length=100)
+    parent = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='children'
+    )
 
     def __str__(self):
         return self.name
