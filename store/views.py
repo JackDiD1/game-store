@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 
 def product_list(request):
     query = request.GET.get('q')
+    type_slug = request.GET.get('type')
     category_id = request.GET.get('category')
     type_filter = request.GET.get('type')
 
@@ -23,9 +24,14 @@ def product_list(request):
     if query:
         products = products.filter(name__icontains=query)
 
-    # Фильтр по категории
+    if type_slug:
+        main_category = Category.objects.filter(name__iexact=type_slug.capitalize()).first()
+        if main_category:
+            subcategories = main_category.children.all()
+            products = products.filter(categories__in=subcategories)
+
     if category_id:
-        products = products.filter(categories__id=category_id)
+            products = products.filter(categories__id=category_id)
 
     products = products.order_by('name')
 
