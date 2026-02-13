@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from .models import Product, Category
 from .models import MenuItem
 from django.shortcuts import get_object_or_404
+from django.db.models import F
 
 def product_list(request):
     type_name = request.GET.get('type')
@@ -57,4 +58,16 @@ def page_detail(request, slug):
     return render(request, 'store/page_detail.html', {
         'page': page,
         'menu_items': menu_items,
+    })
+
+def home(request):
+    new_products = Product.objects.filter(is_new=True)[:8]
+
+    changed_products = Product.objects.filter(
+        old_price__isnull=False
+    ).exclude(old_price=models.F('price'))[:8]
+
+    return render(request, 'store/home.html', {
+        'new_products': new_products,
+        'changed_products': changed_products,
     })

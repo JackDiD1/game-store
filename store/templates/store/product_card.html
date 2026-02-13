@@ -1,0 +1,31 @@
+<div class="col-6 col-md-4 col-lg-3">
+    <div class="product-card h-100 text-center p-3">
+
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="img-fluid mb-2">
+        {% endif %}
+
+        <h5>{{ product.name }}</h5>
+
+        {% if product.old_price %}
+            {% if product.price < product.old_price %}
+                <p>
+                    <span class="text-success fw-bold">
+                        {{ product.price }} ₽
+                    </span>
+                    <del class="text-muted">{{ product.old_price }} ₽</del>
+                </p>
+            {% elif product.price > product.old_price %}
+                <p>
+                    <span class="text-danger fw-bold">
+                        {{ product.price }} ₽
+                    </span>
+                    <del class="text-muted">{{ product.old_price }} ₽</del>
+                </p>
+            {% endif %}
+        {% else %}
+            <p>{{ product.price }} ₽</p>
+        {% endif %}
+
+    </div>
+</div>

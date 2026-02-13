@@ -23,16 +23,32 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField("Название", max_length=200)
     price = models.DecimalField("Цена", max_digits=10, decimal_places=2, default=0)
+
+    old_price = models.DecimalField(
+        "Старая цена",
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+
+    is_new = models.BooleanField("Новинка", default=False)
+
     stock = models.PositiveIntegerField("Количество на складе", default=0)
     image = models.ImageField("Изображение", upload_to='products/', blank=True, null=True)
     description = models.TextField("Описание", blank=True)
     categories = models.ManyToManyField('Category', blank=True, related_name='products')
 
+    def price_change(self):
+        if self.old_price:
+            if self.price < self.old_price:
+                return "down"
+            elif self.price > self.old_price:
+                return "up"
+        return None
+
     def __str__(self):
         return self.name
-
-    class Meta:
-        ordering = ['name']
 
 # 📁 Модель загрузки Excel файла
 class ProductUpload(models.Model):

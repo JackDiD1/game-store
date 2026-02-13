@@ -13,8 +13,8 @@ class PageImageInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    inlines = [ProductImageInline]
-    filter_horizontal = ('categories',)
+    list_display = ('name', 'price', 'old_price', 'is_new')
+    list_editable = ('price', 'old_price', 'is_new')
 
 @admin.register(MenuItem)
 class MenuItemAdmin(admin.ModelAdmin):
