@@ -4,16 +4,16 @@
 
 {% block content %}
 
-<div class="top-menu mb-4 text-center">
-    {% for cat in categories %}
-        {% if not cat.parent %}
-            <a href="?type={{ cat.name }}"
-               class="menu-link {% if request.GET.type == cat.name %}active{% endif %}">
-                {{ cat.name }}
-            </a>
-        {% endif %}
+{% if subcategories %}
+<div class="mb-4 text-center">
+    {% for cat in subcategories %}
+        <a href="?type={{ selected_main.name }}&category={{ cat.id }}"
+           class="btn btn-outline-primary btn-sm">
+            {{ cat.name }}
+        </a>
     {% endfor %}
 </div>
+{% endif %}
 
 <div class="mb-4">
     <a href="?" class="btn btn-outline-dark btn-sm {% if not selected_category %}active{% endif %}">

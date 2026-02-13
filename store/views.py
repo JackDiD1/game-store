@@ -4,47 +4,34 @@ from .models import MenuItem
 from django.shortcuts import get_object_or_404
 
 def product_list(request):
-    query = request.GET.get('q')
-    type_slug = request.GET.get('type')
+    type_name = request.GET.get('type')
     category_id = request.GET.get('category')
-    type_filter = request.GET.get('type')
 
     products = Product.objects.all()
 
-    if type_filter == 'disks':
-        products = products.filter(categories__name='Диски')
+    main_categories = Category.objects.filter(parent__isnull=True)
 
-    elif type_filter == 'consoles':
-        products = products.filter(categories__name='Консоли')
+    selected_main = None
+    subcategories = Category.objects.none()
 
-    elif type_filter == 'accessories':
-        products = products.filter(categories__name='Аксессуары')
-
-    # Поиск по названию
-    if query:
-        products = products.filter(name__icontains=query)
-
-    if type_slug:
-        main_category = Category.objects.filter(name__iexact=type_slug.capitalize()).first()
-        if main_category:
-            subcategories = main_category.children.all()
+    if type_name:
+        selected_main = Category.objects.filter(name=type_name, parent__isnull=True).first()
+        if selected_main:
+            subcategories = selected_main.children.all()
             products = products.filter(categories__in=subcategories)
 
     if category_id:
-            products = products.filter(categories__id=category_id)
+        products = products.filter(categories__id=category_id)
+
+    products = products.distinct()
 
     products = products.order_by('name')
 
-    categories = Category.objects.all()
-
-    menu_items = MenuItem.objects.filter(is_active=True)
-
     return render(request, 'store/product_list.html', {
         'products': products,
-        'query': query,
-        'categories': categories,
-        'selected_category': category_id,
-        'menu_items': menu_items, 
+        'main_categories': main_categories,
+        'subcategories': subcategories,
+        'selected_main': selected_main,
     })
 
 
