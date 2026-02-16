@@ -67,7 +67,10 @@ def home(request):
         old_price__isnull=False
     ).exclude(old_price=models.F('price'))[:8]
 
+    menu_items = MenuItem.objects.filter(is_active=True)
+
     return render(request, 'store/home.html', {
         'new_products': new_products,
         'changed_products': changed_products,
+        'menu_items': menu_items,
     })
