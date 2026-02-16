@@ -1,15 +1,37 @@
-<h2 class="mb-4">🔥 Новинки</h2>
+{% extends 'base.html' %}
+{% block title %}Главная{% endblock %}
 
-<div class="row g-4 mb-5">
+{% block content %}
+
+<h2 class="mb-3">Новинки</h2>
+<div class="row">
     {% for product in new_products %}
-        {% include "store/product_card.html" %}
+        <div class="col-md-3">
+            <a href="{% url 'product_detail' product.pk %}">
+                {{ product.name }} — {{ product.price }} ₽
+            </a>
+        </div>
+    {% empty %}
+        <p>Нет новинок</p>
     {% endfor %}
 </div>
 
-<h2 class="mb-4">📉 Изменение цен</h2>
-
-<div class="row g-4">
+<h2 class="mt-5 mb-3">Изменение цен</h2>
+<div class="row">
     {% for product in changed_products %}
-        {% include "store/product_card.html" %}
+        <div class="col-md-3">
+            <a href="{% url 'product_detail' product.pk %}">
+                {{ product.name }}
+                {% if product.price < product.old_price %}
+                    <span class="text-success">{{ product.price }} ₽</span>
+                {% else %}
+                    <span class="text-danger">{{ product.price }} ₽</span>
+                {% endif %}
+            </a>
+        </div>
+    {% empty %}
+        <p>Нет изменений цен</p>
     {% endfor %}
 </div>
+
+{% endblock %}
