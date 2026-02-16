@@ -33,11 +33,14 @@ def product_list(request):
 
     products = products.distinct().order_by('name')
 
+    menu_items = MenuItem.objects.filter(is_active=True)
+
     return render(request, 'store/product_list.html', {
         'products': products,
         'main_categories': main_categories,
         'subcategories': subcategories,
         'selected_main': selected_main,
+        'menu_items': menu_items,
     })
 
 
