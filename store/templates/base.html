@@ -12,7 +12,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="/">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
                 <img src="{% static 'img/logo.png' %}" height="40" class="site-logo me-2">
                 Game Time
             </a>
@@ -23,13 +23,25 @@
     
             <div class="collapse navbar-collapse" id="mainMenu">
                 <ul class="navbar-nav ms-auto">
+    
+                    <!-- Главная -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Главная</a>
+                    </li>
+    
+                    <!-- Каталог -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'product_list' %}?type=Диски">Каталог</a>
+                    </li>
+    
+                    <!-- Остальные меню из админки -->
                     {% for item in menu_items %}
                         {% if not item.parent %}
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="/page/{{ item.slug }}/" role="button" data-bs-toggle="dropdown">
                                     {{ item.title }}
                                 </a>
-                
+    
                                 {% if item.children.all %}
                                 <ul class="dropdown-menu">
                                     {% for child in item.children.all %}
@@ -44,6 +56,7 @@
                             </li>
                         {% endif %}
                     {% endfor %}
+    
                 </ul>
             </div>
         </div>
