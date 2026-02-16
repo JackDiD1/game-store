@@ -6,13 +6,20 @@
 <h2 class="mb-3">Новинки</h2>
 <div class="row">
     {% for product in new_products %}
-        <div class="col-md-3">
-            <a href="{% url 'product_detail' product.pk %}">
-                {{ product.name }} — {{ product.price }} ₽
-            </a>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 text-center">
+
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                {% endif %}
+
+                <div class="card-body">
+                    <h6>{{ product.name }}</h6>
+                    <p>{{ product.price }} ₽</p>
+                </div>
+
+            </div>
         </div>
-    {% empty %}
-        <p>Нет новинок</p>
     {% endfor %}
 </div>
 
