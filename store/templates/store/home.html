@@ -5,3 +5,11 @@
         {% include "store/product_card.html" %}
     {% endfor %}
 </div>
+
+<h2 class="mb-4">📉 Изменение цен</h2>
+
+<div class="row g-4">
+    {% for product in changed_products %}
+        {% include "store/product_card.html" %}
+    {% endfor %}
+</div>
