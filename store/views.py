@@ -3,6 +3,7 @@ from .models import Product, Category
 from .models import MenuItem
 from django.shortcuts import get_object_or_404
 from django.db.models import F
+from django.db import models
 
 def product_list(request):
     type_name = request.GET.get('type')
@@ -15,6 +16,9 @@ def product_list(request):
 
     selected_main = None
     subcategories = Category.objects.none()
+
+    is_new = request.GET.get('new')
+    is_changed = request.GET.get('changed')
 
     # Фильтр по главной категории
     if type_name:
@@ -30,6 +34,14 @@ def product_list(request):
     # Фильтр по подкатегории
     if category_id:
         products = products.filter(categories__id=category_id)
+
+    if is_new:
+        products = products.filter(is_new=True)
+
+    if is_changed:
+        products = products.filter(
+            old_price__isnull=False
+        ).exclude(old_price=models.F('price'))
 
     products = products.distinct().order_by('name')
 
