@@ -19,19 +19,35 @@
 <h2 class="mt-5 mb-3">Изменение цен</h2>
 <div class="row">
     {% for product in changed_products %}
-        <div class="col-md-3">
-            <a href="{% url 'product_detail' product.pk %}">
-                {{ product.name }}
-                {% if product.price < product.old_price %}
-                    <span class="text-success">{{ product.price }} ₽</span>
-                {% else %}
-                    <span class="text-danger">{{ product.price }} ₽</span>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 text-center">
+
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
                 {% endif %}
-            </a>
+
+                <div class="card-body">
+                    <h6>{{ product.name }}</h6>
+
+                    {% if product.price < product.old_price %}
+                        <p>
+                            <span class="text-success">{{ product.price }} ₽</span><br>
+                            <small class="text-muted text-decoration-line-through">
+                                {{ product.old_price }} ₽
+                            </small>
+                        </p>
+                    {% else %}
+                        <p>
+                            <span class="text-danger">{{ product.price }} ₽</span><br>
+                            <small class="text-muted text-decoration-line-through">
+                                {{ product.old_price }} ₽
+                            </small>
+                        </p>
+                    {% endif %}
+                </div>
+
+            </div>
         </div>
-    {% empty %}
-        <p>Нет изменений цен</p>
     {% endfor %}
 </div>
-
 {% endblock %}
