@@ -65,7 +65,7 @@ def home(request):
 
     changed_products = Product.objects.filter(
         old_price__isnull=False
-    ).exclude(old_price=models.F('price'))[:8]
+    ).exclude(old_price=F('price'))[:8]
 
     menu_items = MenuItem.objects.filter(is_active=True)
 
