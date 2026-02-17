@@ -79,3 +79,6 @@ def page_detail(request, slug):
         'page': page,
         'menu_items': menu_items,
     })
+
+def redirect_to_new(request):
+    return redirect('/?section=new')

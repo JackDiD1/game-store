@@ -1,9 +1,5 @@
 from django.urls import path
 from . import views
-from django.shortcuts import redirect
-
-def redirect_to_new(request):
-    return redirect('/products/?type=Новинки')
 
 urlpatterns = [
     path('', views.redirect_to_new),
