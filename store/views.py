@@ -7,7 +7,7 @@ from django.db import models
 from django.shortcuts import redirect
 
 def product_list(request):
-    type_name = request.GET.get('type')
+    type_name = request.GET.get('type', 'Новинки')
     category_id = request.GET.get('category')
     section = request.GET.get('section')
 
