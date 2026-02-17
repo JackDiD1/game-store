@@ -44,6 +44,9 @@ def product_list(request):
             old_price__isnull=False
         ).exclude(old_price=F('price'))
 
+    if not type_name and not category_id and not section:
+        products = products.filter(is_new=True)
+
     # 🔹 Сортировка
     products = products.distinct().order_by('name')
 
@@ -75,19 +78,4 @@ def page_detail(request, slug):
     return render(request, 'store/page_detail.html', {
         'page': page,
         'menu_items': menu_items,
-    })
-
-def home(request):
-    section = request.GET.get('section')
-
-    new_products = Product.objects.filter(is_new=True)
-    changed_products = Product.objects.filter(
-        old_price__isnull=False
-    ).exclude(old_price=F('price'))
-
-    if not section:
-        return redirect('/?section=new')
-
-    return render(request, 'store/home.html', {
-        'section': section,
     })
