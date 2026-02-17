@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 def product_list(request):
     type_name = request.GET.get('type')
     category_id = request.GET.get('category')
+    section = request.GET.get('section')
 
     products = Product.objects.all()
 
@@ -18,10 +19,7 @@ def product_list(request):
     selected_main = None
     subcategories = Category.objects.none()
 
-    is_new = request.GET.get('new')
-    is_changed = request.GET.get('changed')
-
-    # Фильтр по главной категории
+    # 🔹 Фильтр по главной категории (Диски, Консоли и т.д.)
     if type_name:
         selected_main = Category.objects.filter(
             name=type_name,
@@ -32,20 +30,24 @@ def product_list(request):
             subcategories = selected_main.children.all()
             products = products.filter(categories__parent=selected_main)
 
-    # Фильтр по подкатегории
+    # 🔹 Фильтр по подкатегории
     if category_id:
         products = products.filter(categories__id=category_id)
 
-    if is_new:
+    # 🔹 Новинки
+    if section == "new":
         products = products.filter(is_new=True)
 
-    if is_changed:
+    # 🔹 Изменения цен
+    if section == "price":
         products = products.filter(
             old_price__isnull=False
-        ).exclude(old_price=models.F('price'))
+        ).exclude(old_price=F('price'))
 
+    # 🔹 Сортировка
     products = products.distinct().order_by('name')
 
+    # 🔹 Меню из админки
     menu_items = MenuItem.objects.filter(is_active=True)
 
     return render(request, 'store/product_list.html', {
@@ -55,7 +57,6 @@ def product_list(request):
         'selected_main': selected_main,
         'menu_items': menu_items,
     })
-
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
