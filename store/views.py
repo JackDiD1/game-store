@@ -4,6 +4,7 @@ from .models import MenuItem
 from django.shortcuts import get_object_or_404
 from django.db.models import F
 from django.db import models
+from django.shortcuts import redirect
 
 def product_list(request):
     type_name = request.GET.get('type')
@@ -76,19 +77,16 @@ def page_detail(request, slug):
     })
 
 def home(request):
-    section = request.GET.get('section', 'new')
+    section = request.GET.get('section')
 
     new_products = Product.objects.filter(is_new=True)
     changed_products = Product.objects.filter(
         old_price__isnull=False
     ).exclude(old_price=F('price'))
 
-    if section == 'price':
-        products = changed_products
-    else:
-        products = new_products
+    if not section:
+        return redirect('/?section=new')
 
     return render(request, 'store/home.html', {
-        'products': products,
         'section': section,
     })
