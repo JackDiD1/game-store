@@ -23,33 +23,34 @@
     
             <div class="collapse navbar-collapse" id="mainMenu">
                 <ul class="navbar-nav ms-auto">
-                    <!-- Остальные меню из админки -->
-                    {% for item in menu_items %}
-                        {% if not item.parent %}
-                            <li class="nav-item dropdown">
-                                {% if item.slug == 'new' %}
-                                    <a class="nav-link" href="/?section=new">{{ item.title }}</a>
-                                        {% elif item.slug == 'price' %}
-                                            <a class="nav-link" href="/?section=price">{{ item.title }}</a>
-                                        {% else %}
-                                            <a class="nav-link" href="/page/{{ item.slug }}/">{{ item.title }}</a>
-                                        {% endif %}
-    
-                                {% if item.children.all %}
-                                <ul class="dropdown-menu">
-                                    {% for child in item.children.all %}
-                                        <li>
-                                            <a class="dropdown-item" href="/page/{{ child.slug }}/">
-                                                {{ child.title }}
-                                            </a>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                                {% endif %}
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-    
+
+                    <!-- Новое -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.GET.section == 'new' %}active{% endif %}" href="/?section=new">
+                            Новое
+                        </a>
+                    </li>
+                
+                    <!-- Изменения цен -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/?section=price">Изменения цен</a>
+                    </li>
+
+                    <!-- Диски -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'product_list' %}?type=Диски">Диски</a>
+                    </li>
+                
+                    <!-- Консоли -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'product_list' %}?type=Консоли">Консоли</a>
+                    </li>
+                
+                    <!-- Аксессуары -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'product_list' %}?type=Аксессуары">Аксессуары</a>
+                    </li>
+                
                 </ul>
             </div>
         </div>
