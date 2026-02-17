@@ -1,68 +1,69 @@
 {% extends 'base.html' %}
-{% block title %}Главная{% endblock %}
 
 {% block content %}
 
-<h2 class="mb-3">Новинки</h2>
-<div class="row">
+<!-- Новинки -->
+{% if section == 'new' or not section %}
+<h3 class="mb-3">Новинки</h3>
+
+<div class="row g-4">
     {% for product in new_products %}
-        <div class="col-md-3 mb-4">
-            <div class="card h-100 text-center">
-
-                <a href="{% url 'product_detail' product.pk %}" class="text-decoration-none text-dark">
-                    <div class="card h-100 text-center">
-                
-                        {% if product.image %}
-                            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                        {% endif %}
-                
-                        <div class="card-body">
-                            <h6>{{ product.name }}</h6>
-                            <p>{{ product.price }} ₽</p>
-                        </div>
-                
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'product_detail' product.pk %}" class="text-decoration-none text-dark">
+                <div class="card h-100">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top">
+                    {% endif %}
+                    <div class="card-body">
+                        <h6>{{ product.name }}</h6>
+                        <p class="price">{{ product.price }} ₽</p>
                     </div>
-                </a>
-
-            </div>
+                </div>
+            </a>
         </div>
+    {% empty %}
+        <p>Нет новинок</p>
     {% endfor %}
 </div>
+{% endif %}
 
-<h2 class="mt-5 mb-3">Изменение цен</h2>
-<div class="row">
+
+<!-- Изменения цен -->
+{% if section == 'price' or not section %}
+<h3 class="mt-5 mb-3">Изменения цен</h3>
+
+<div class="row g-4">
     {% for product in changed_products %}
-        <a href="{% url 'product_detail' product.pk %}" class="text-decoration-none text-dark">
-            <div class="col-md-3 mb-4">
-                <div class="card h-100 text-center">
-
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'product_detail' product.pk %}" class="text-decoration-none text-dark">
+                <div class="card h-100">
                     {% if product.image %}
-                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                        <img src="{{ product.image.url }}" class="card-img-top">
                     {% endif %}
-
                     <div class="card-body">
                         <h6>{{ product.name }}</h6>
 
                         {% if product.price < product.old_price %}
-                            <p>
-                                <span class="text-success">{{ product.price }} ₽</span><br>
-                                <small class="text-muted text-decoration-line-through">
-                                    {{ product.old_price }} ₽
-                                </small>
+                            <p class="text-success">
+                                {{ product.price }} ₽
                             </p>
                         {% else %}
-                            <p>
-                                <span class="text-danger">{{ product.price }} ₽</span><br>
-                                <small class="text-muted text-decoration-line-through">
-                                    {{ product.old_price }} ₽
-                                </small>
+                            <p class="text-danger">
+                                {{ product.price }} ₽
                             </p>
                         {% endif %}
-                    </div>
 
+                        <small class="text-muted">
+                            Было: {{ product.old_price }} ₽
+                        </small>
+                    </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        </div>
+    {% empty %}
+        <p>Нет изменений цен</p>
     {% endfor %}
 </div>
+{% endif %}
+
 {% endblock %}
