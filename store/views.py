@@ -76,18 +76,19 @@ def page_detail(request, slug):
     })
 
 def home(request):
-    new_products = Product.objects.filter(is_new=True)[:8]
+    section = request.GET.get('section', 'new')
 
-    section = request.GET.get('section')
-
+    new_products = Product.objects.filter(is_new=True)
     changed_products = Product.objects.filter(
         old_price__isnull=False
-    ).exclude(old_price=F('price'))[:8]
+    ).exclude(old_price=F('price'))
 
-    menu_items = MenuItem.objects.filter(is_active=True)
+    if section == 'price':
+        products = changed_products
+    else:
+        products = new_products
 
     return render(request, 'store/home.html', {
-    'new_products': new_products,
-    'changed_products': changed_products,
-    'section': section,
+        'products': products,
+        'section': section,
     })
