@@ -24,5 +24,10 @@ class MenuItemAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     inlines = [PageImageInline]
 
+def get_url(self):
+    if self.slug.startswith('?'):
+        return f"/{self.slug}"
+    return f"/page/{self.slug}/"
+
 admin.site.register(Category)
 admin.site.register(ProductUpload)

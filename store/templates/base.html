@@ -23,34 +23,27 @@
     
             <div class="collapse navbar-collapse" id="mainMenu">
                 <ul class="navbar-nav ms-auto">
-
-                    <!-- Новое -->
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.GET.section == 'new' %}active{% endif %}" href="/?section=new">
-                            Новое
-                        </a>
-                    </li>
+                    {% for item in menu_items %}
+                        {% if not item.parent %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="{{ item.get_url }}" role="button" data-bs-toggle="dropdown">
+                                    {{ item.title }}
+                                </a>
                 
-                    <!-- Изменения цен -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="/?section=price">Изменения цен</a>
-                    </li>
-
-                    <!-- Диски -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'product_list' %}?type=Диски">Диски</a>
-                    </li>
-                
-                    <!-- Консоли -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'product_list' %}?type=Консоли">Консоли</a>
-                    </li>
-                
-                    <!-- Аксессуары -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'product_list' %}?type=Аксессуары">Аксессуары</a>
-                    </li>
-                
+                                {% if item.children.exists %}
+                                <ul class="dropdown-menu">
+                                    {% for child in item.children.all %}
+                                        <li>
+                                            <a class="dropdown-item" href="{{ child.get_url }}">
+                                                {{ child.title }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
                 </ul>
             </div>
         </div>

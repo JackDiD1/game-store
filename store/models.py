@@ -86,6 +86,9 @@ class MenuItem(models.Model):
         ordering = ['order']
         verbose_name = "Пункт меню"
         verbose_name_plural = "Меню сайта"
+    
+    def get_url(self):
+        return f"/page/{self.slug}/"
 
     def __str__(self):
         return self.title
