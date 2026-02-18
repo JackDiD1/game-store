@@ -34,7 +34,6 @@ class Product(models.Model):
 
     is_new = models.BooleanField("Новинка", default=False)
 
-    stock = models.PositiveIntegerField("Количество на складе", default=0)
     image = models.ImageField("Изображение", upload_to='products/', blank=True, null=True)
     description = models.TextField("Описание", blank=True)
     categories = models.ManyToManyField('Category', blank=True, related_name='products')
@@ -124,7 +123,7 @@ def import_products_from_excel(sender, instance, created, **kwargs):
     imported_names = []  # список товаров из файла
 
     for row in sheet.iter_rows(min_row=2, values_only=True):
-        name, price, stock, category_name = row
+        name, price, category_name = row
 
         if not name:
             continue
@@ -136,14 +135,6 @@ def import_products_from_excel(sender, instance, created, **kwargs):
             price = float(price)
         except (TypeError, ValueError):
             price = 0
-
-        try:
-            stock = int(float(stock))
-        except (TypeError, ValueError):
-            stock = 0
-
-        if stock < 0:
-            stock = 0
 
         product, created = Product.objects.get_or_create(name=name)
 
@@ -159,7 +150,6 @@ def import_products_from_excel(sender, instance, created, **kwargs):
             product.categories.add(category)
 
         product.price = price
-        product.stock = stock
 
         product.save()
 

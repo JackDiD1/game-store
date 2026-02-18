@@ -29,8 +29,8 @@ def assign_category(modeladmin, request, queryset):
 # 🔹 Админка товаров (всё в одном месте)
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'old_price', 'is_new', 'stock')
-    list_editable = ('price', 'old_price', 'is_new', 'stock')
+    list_display = ('name', 'price', 'old_price', 'is_new')
+    list_editable = ('price', 'old_price', 'is_new')
 
     filter_horizontal = ('categories',)
     search_fields = ('name',)

@@ -40,14 +40,6 @@
                     {% endif %}
                     <h5 class="mt-2">{{ product.name }}</h5>
                     <p class="price">{{ product.price }} ₽</p>
-                    <p>
-                        {% if product.stock > 0 %}
-                            <span class="text-success">В наличии: {{ product.stock }}</span>
-                        {% else %}
-                            <span class="text-danger">Нет в наличии</span>
-                        {% endif %}
-                    </p>
-                </div>
             </a>
         </div>
     {% endfor %}
