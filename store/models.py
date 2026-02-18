@@ -33,6 +33,7 @@ class Product(models.Model):
     )
 
     is_new = models.BooleanField("Новинка", default=False)
+    hide_price = models.BooleanField("Скрыть цену", default=False)
 
     image = models.ImageField("Изображение", upload_to='products/', blank=True, null=True)
     description = models.TextField("Описание", blank=True)
