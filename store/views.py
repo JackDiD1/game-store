@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Product, Category
 from .models import MenuItem
-from django.shortcuts import get_object_or_404
 from django.db.models import F
 from django.db import models
 from django.shortcuts import redirect
@@ -9,20 +8,18 @@ from django.shortcuts import redirect
 def product_list(request):
     type_name = request.GET.get('type', 'Новинки')
     category_id = request.GET.get('category')
-    section = request.GET.get('section')
 
     products = Product.objects.all()
 
-    # Главные категории
     main_categories = Category.objects.filter(parent__isnull=True)
 
     selected_main = None
     subcategories = Category.objects.none()
 
-    # 🔹 Фильтр по главной категории (Диски, Консоли и т.д.)
+    # 🔹 Фильтр по главной категории
     if type_name:
         selected_main = Category.objects.filter(
-            name=type_name,
+            name__iexact=type_name,
             parent__isnull=True
         ).first()
 
@@ -30,27 +27,22 @@ def product_list(request):
             subcategories = selected_main.children.all()
             products = products.filter(categories__parent=selected_main)
 
-    # 🔹 Фильтр по подкатегории
+    # 🔹 Подкатегория
     if category_id:
         products = products.filter(categories__id=category_id)
 
-    # 🔹 Новинки
-    if section == "new":
+    # 🔹 Если категория Новинки → показываем только is_new
+    if type_name.lower() == "новинки":
         products = products.filter(is_new=True)
 
-    # 🔹 Изменения цен
-    if section == "price":
+    # 🔹 Если категория Изменения цен
+    if type_name.lower() == "изменения цен":
         products = products.filter(
             old_price__isnull=False
         ).exclude(old_price=F('price'))
 
-    if not type_name and not category_id and not section:
-        products = products.filter(is_new=True)
-
-    # 🔹 Сортировка
     products = products.distinct().order_by('name')
 
-    # 🔹 Меню из админки
     menu_items = MenuItem.objects.filter(is_active=True)
 
     return render(request, 'store/product_list.html', {
@@ -81,4 +73,4 @@ def page_detail(request, slug):
     })
 
 def redirect_to_new(request):
-    return redirect('/?section=new')
+    return redirect('/products/?type=Новинки')
