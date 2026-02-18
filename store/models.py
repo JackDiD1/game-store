@@ -124,7 +124,7 @@ def import_products_from_excel(sender, instance, created, **kwargs):
     imported_names = []  # список товаров из файла
 
     for row in sheet.iter_rows(min_row=2, values_only=True):
-        name, price, stock = row
+        name, price, stock, category_name = row
 
         if not name:
             continue
@@ -146,6 +146,17 @@ def import_products_from_excel(sender, instance, created, **kwargs):
             stock = 0
 
         product, created = Product.objects.get_or_create(name=name)
+
+        if category_name:
+            category_name = str(category_name).strip()
+
+            category, _ = Category.objects.get_or_create(
+                name=category_name,
+                parent=None
+            )
+
+            product.categories.clear()
+            product.categories.add(category)
 
         product.price = price
         product.stock = stock
