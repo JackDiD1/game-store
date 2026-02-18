@@ -39,7 +39,11 @@
                         <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
                     {% endif %}
                     <h5 class="mt-2">{{ product.name }}</h5>
-                    <p class="price">{{ product.price }} ₽</p>
+                    {% if not product.hide_price %}
+                        <p class="price">{{ product.price }} ₽</p>
+                    {% else %}
+                        <p class="text-muted">Цена по запросу</p>
+                    {% endif %}
             </a>
         </div>
     {% endfor %}
