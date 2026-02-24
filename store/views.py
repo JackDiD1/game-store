@@ -26,10 +26,14 @@ def product_list(request):
         if selected_main:
             subcategories = selected_main.children.all()
 
-            products = products.filter(
-                models.Q(categories=selected_main) |
-                models.Q(categories__parent=selected_main)
+        if selected_main:
+            subcategories = selected_main.children.all()
+
+            category_ids = [selected_main.id] + list(
+                subcategories.values_list('id', flat=True)
             )
+
+            products = products.filter(categories__id__in=category_ids)
 
     # 🔹 Подкатегория
     if category_id:

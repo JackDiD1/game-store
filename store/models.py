@@ -8,6 +8,8 @@ from django.dispatch import receiver
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+    order = models.PositiveIntegerField(default=0)
+
     parent = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
@@ -15,6 +17,9 @@ class Category(models.Model):
         blank=True,
         related_name='children'
     )
+
+    class Meta:
+        ordering = ['order']
 
     def __str__(self):
         return self.name
