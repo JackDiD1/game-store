@@ -34,7 +34,8 @@ def product_list(request):
 
     # 🔹 Фильтр по нескольким подкатегориям
     if selected_categories:
-        products = products.filter(categories__id__in=selected_categories)
+        for cat_id in selected_categories:
+            products = products.filter(categories__id=cat_id)
 
     # 🔹 Новинки
     if type_name and type_name.lower() == "новинки":
