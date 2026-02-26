@@ -23,7 +23,6 @@ class ProductAdmin(admin.ModelAdmin):
     filter_horizontal = ('categories',)
     list_filter = ('categories',)
     search_fields = ('name',)
-    actions = [assign_category]
 
     inlines = [ProductImageInline]
 
