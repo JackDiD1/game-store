@@ -14,18 +14,6 @@ class PageImageInline(admin.TabularInline):
     model = PageImage
     extra = 1
 
-
-# 🔹 Массовое назначение категории
-@admin.action(description="Назначить категорию")
-def assign_category(modeladmin, request, queryset):
-    category_id = request.POST.get('category')
-
-    if category_id:
-        category = Category.objects.get(id=category_id)
-        for product in queryset:
-            product.categories.add(category)
-
-
 # 🔹 Админка товаров (всё в одном месте)
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
