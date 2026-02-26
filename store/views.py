@@ -60,6 +60,7 @@ def product_list(request):
         'subcategories': subcategories,
         'selected_main': selected_main,
         'menu_items': menu_items,
+        'selected_categories': category_ids,
     })
 
 def product_detail(request, pk):

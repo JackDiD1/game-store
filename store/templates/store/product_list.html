@@ -25,7 +25,7 @@
             <input type="checkbox"
                    name="category"
                    value="{{ sub.id }}"
-                   {% if sub.id|stringformat:"s" in request.GET.getlist('category') %}
+                   {% if sub.id|stringformat:"s" in selected_categories %}
                        checked
                    {% endif %}
             >
