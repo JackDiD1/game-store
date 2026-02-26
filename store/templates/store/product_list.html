@@ -16,34 +16,32 @@
 
 <!-- 🔥 Новый фильтр подкатегорий -->
 {% if subcategories %}
-<form method="get" class="mb-4">
+<<form method="get" class="mb-4">
 
     <input type="hidden" name="type" value="{{ selected_main.name }}">
 
     <div class="d-flex flex-wrap justify-content-center gap-2">
 
         {% for sub in subcategories %}
-            <label class="btn btn-outline-light btn-sm">
-                <input type="checkbox"
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="checkbox"
                        name="category"
                        value="{{ sub.id }}"
-                       autocomplete="off"
-                       class="d-none"
+                       id="cat{{ sub.id }}"
                        {% if sub.id|stringformat:"s" in selected_categories %}
                            checked
                        {% endif %}
                 >
-                {{ sub.name }}
-            </label>
+                <label class="form-check-label" for="cat{{ sub.id }}">
+                    {{ sub.name }}
+                </label>
+            </div>
         {% endfor %}
 
         <button type="submit" class="btn btn-warning btn-sm">
             Применить
         </button>
-
-        <a href="?type={{ selected_main.name }}" class="btn btn-secondary btn-sm">
-            Сброс
-        </a>
 
     </div>
 </form>

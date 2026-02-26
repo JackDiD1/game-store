@@ -38,7 +38,7 @@ def product_list(request):
     # 🔹 Подкатегория
     if category_ids:
         for cat_id in category_ids:
-            products = products.filter(categories__id=cat_id)
+            products = products.filter(categories__id__in=category_ids)
 
     # 🔹 Если категория Новинки → показываем только is_new
     if type_name.lower() == "новинки":
