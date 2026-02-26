@@ -26,23 +26,25 @@ def product_list(request):
         if selected_main:
             subcategories = selected_main.children.all()
 
-            # показываем товары главной категории + всех её подкатегорий
+            # Все категории этой группы
             all_ids = [selected_main.id] + list(
                 subcategories.values_list('id', flat=True)
             )
+
+            # Показываем все товары категории
             products = products.filter(categories__id__in=all_ids)
 
-    # 🔹 Фильтр по нескольким подкатегориям
+    # 🔹 AND фильтр по выбранным подкатегориям
     if selected_categories:
         for cat_id in selected_categories:
             products = products.filter(categories__id=cat_id)
 
     # 🔹 Новинки
-    if type_name and type_name.lower() == "новинки":
+    if type_name.lower() == "новинки":
         products = products.filter(is_new=True)
 
     # 🔹 Изменения цен
-    if type_name and type_name.lower() == "изменения цен":
+    if type_name.lower() == "изменения цен":
         products = products.filter(
             old_price__isnull=False
         ).exclude(old_price=F('price'))
