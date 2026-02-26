@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 
 def product_list(request):
     type_name = request.GET.get('type', 'Новинки')
-    category_ids = request.GET.getlist('category')
+    selected_categories = request.GET.getlist('category')
 
     products = Product.objects.all()
 
@@ -16,7 +16,7 @@ def product_list(request):
     selected_main = None
     subcategories = Category.objects.none()
 
-    # 🔹 Фильтр по главной категории
+    # 🔹 Главная категория
     if type_name:
         selected_main = Category.objects.filter(
             name__iexact=type_name,
@@ -26,26 +26,22 @@ def product_list(request):
         if selected_main:
             subcategories = selected_main.children.all()
 
-        if selected_main:
-            subcategories = selected_main.children.all()
-
-            category_ids = [selected_main.id] + list(
+            # показываем товары главной категории + всех её подкатегорий
+            all_ids = [selected_main.id] + list(
                 subcategories.values_list('id', flat=True)
             )
+            products = products.filter(categories__id__in=all_ids)
 
-            products = products.filter(categories__id__in=category_ids)
+    # 🔹 Фильтр по нескольким подкатегориям
+    if selected_categories:
+        products = products.filter(categories__id__in=selected_categories)
 
-    # 🔹 Подкатегория
-    if category_ids:
-        for cat_id in category_ids:
-            products = products.filter(categories__id__in=category_ids)
-
-    # 🔹 Если категория Новинки → показываем только is_new
-    if type_name.lower() == "новинки":
+    # 🔹 Новинки
+    if type_name and type_name.lower() == "новинки":
         products = products.filter(is_new=True)
 
-    # 🔹 Если категория Изменения цен
-    if type_name.lower() == "изменения цен":
+    # 🔹 Изменения цен
+    if type_name and type_name.lower() == "изменения цен":
         products = products.filter(
             old_price__isnull=False
         ).exclude(old_price=F('price'))
@@ -60,7 +56,7 @@ def product_list(request):
         'subcategories': subcategories,
         'selected_main': selected_main,
         'menu_items': menu_items,
-        'selected_categories': category_ids,
+        'selected_categories': selected_categories,
     })
 
 def product_detail(request, pk):
