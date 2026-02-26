@@ -33,6 +33,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_editable = ('price', 'old_price', 'is_new', 'hide_price')
 
     filter_horizontal = ('categories',)
+    list_filter = ('categories',)
     search_fields = ('name',)
     actions = [assign_category]
 
