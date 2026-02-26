@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 
 def product_list(request):
     type_name = request.GET.get('type', 'Новинки')
-    category_id = request.GET.get('category')
+    category_ids = request.GET.getlist('category')
 
     products = Product.objects.all()
 
@@ -36,8 +36,9 @@ def product_list(request):
             products = products.filter(categories__id__in=category_ids)
 
     # 🔹 Подкатегория
-    if category_id:
-        products = products.filter(categories__id=category_id)
+    if category_ids:
+        for cat_id in category_ids:
+            products = products.filter(categories__id=cat_id)
 
     # 🔹 Если категория Новинки → показываем только is_new
     if type_name.lower() == "новинки":

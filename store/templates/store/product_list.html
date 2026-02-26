@@ -50,4 +50,25 @@
     {% endfor %}
 </div>
 
+<form method="get">
+
+    <input type="hidden" name="type" value="{{ selected_main.name }}">
+
+    {% for sub in subcategories %}
+        <div>
+            <input type="checkbox"
+                   name="category"
+                   value="{{ sub.id }}"
+                   {% if sub.id|stringformat:"s" in request.GET.getlist('category') %}
+                       checked
+                   {% endif %}
+            >
+            {{ sub.name }}
+        </div>
+    {% endfor %}
+
+    <button type="submit">Применить</button>
+
+</form>
+
 {% endblock %}
