@@ -5,6 +5,8 @@ from django import forms
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
+
+# 🔥 Форма выбора категории
 class AssignCategoryForm(forms.Form):
     _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
     category = forms.ModelChoiceField(
@@ -12,6 +14,8 @@ class AssignCategoryForm(forms.Form):
         label="Выберите категорию"
     )
 
+
+# 🔥 Action массового назначения категории
 def assign_category(modeladmin, request, queryset):
     if 'apply' in request.POST:
         form = AssignCategoryForm(request.POST)
@@ -41,29 +45,29 @@ def assign_category(modeladmin, request, queryset):
 
 assign_category.short_description = "Назначить категорию"
 
+
 # 🔹 Inline изображения товаров
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
+
 
 # 🔹 Inline изображения страниц
 class PageImageInline(admin.TabularInline):
     model = PageImage
     extra = 1
 
-# 🔹 Админка товаров (всё в одном месте)
-@admin.register(Product)
+
+# 🔹 Админка товаров
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'old_price', 'is_new', 'hide_price')
-
     filter_horizontal = ('categories',)
     list_filter = ('categories',)
     search_fields = ('name',)
-
     inlines = [ProductImageInline]
-
     actions = [assign_category]
+
 
 # 🔹 Админка меню
 @admin.register(MenuItem)
@@ -73,6 +77,7 @@ class MenuItemAdmin(admin.ModelAdmin):
     list_filter = ('parent',)
     prepopulated_fields = {"slug": ("title",)}
     inlines = [PageImageInline]
+
 
 # 🔹 Остальные модели
 admin.site.register(Category)
