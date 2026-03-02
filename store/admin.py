@@ -10,6 +10,7 @@ class AssignCategoryForm(forms.Form):
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(),
         label="Выберите категорию"
+    )
 
 def assign_category(modeladmin, request, queryset):
     if 'apply' in request.POST:
