@@ -18,7 +18,7 @@ class PageImageInline(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'old_price', 'is_new', 'hide_price')
-    list_editable = ('price', 'old_price', 'is_new', 'hide_price')
+#    list_editable = ('price', 'old_price', 'is_new', 'hide_price')
 
     filter_horizontal = ('categories',)
 
@@ -26,7 +26,6 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
     inlines = [ProductImageInline]
-
 
 # 🔹 Админка меню
 @admin.register(MenuItem)
