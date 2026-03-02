@@ -21,20 +21,21 @@ def assign_category(modeladmin, request, queryset):
         form = AssignCategoryForm(request.POST)
         if form.is_valid():
             category = form.cleaned_data['category']
-            count = 0
-            for product in queryset:
-                product.categories.add(category)
-                count += 1
 
-            modeladmin.message_user(
-                request,
-                f"Категория назначена {count} товарам"
-            )
+            selected = request.POST.getlist('_selected_action')
+            products = Product.objects.filter(pk__in=selected)
+
+            for product in products:
+                product.categories.add(category)
+
+            modeladmin.message_user(request, "Категория назначена.")
             return HttpResponseRedirect(request.get_full_path())
 
     else:
         form = AssignCategoryForm(
-            initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)}
+            initial={
+                '_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
+            }
         )
 
     return render(
