@@ -1,0 +1,22 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h2>Назначить категорию</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    {% for product in products %}
+      <input type="hidden" name="_selected_action" value="{{ product.pk }}">
+    {% endfor %}
+
+    <input type="hidden" name="action" value="assign_category">
+
+    <button type="submit" name="apply" class="default">
+      Назначить
+    </button>
+  </form>
+
+{% endblock %}
