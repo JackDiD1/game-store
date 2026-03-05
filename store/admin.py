@@ -1,27 +1,44 @@
-from django.contrib import admin
-from .models import Product, Category, ProductUpload, ProductImage
-from .models import MenuItem, PageImage
+from django.contrib import admin, messages
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
-from django.contrib import messages
+from .models import Product, Category, ProductUpload, ProductImage
+from .models import MenuItem, PageImage
+
+
+# ---------- INLINE ----------
+
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 1
+
+
+class PageImageInline(admin.TabularInline):
+    model = PageImage
+    extra = 1
+
+
+# ---------- ACTION: добавить категории ----------
 
 @admin.action(description="Добавить категории товарам")
 def add_categories(modeladmin, request, queryset):
 
-    if 'apply' in request.POST:
+    if "apply" in request.POST:
 
         category_ids = request.POST.getlist("categories")
 
         if not category_ids:
-            modeladmin.message_user(request, "Категории не выбраны", level=messages.ERROR)
+            modeladmin.message_user(
+                request,
+                "Категории не выбраны",
+                level=messages.ERROR
+            )
             return HttpResponseRedirect(request.get_full_path())
 
         categories = Category.objects.filter(id__in=category_ids)
 
         for product in queryset:
-            for category in categories:
-                product.categories.add(category)
+            product.categories.add(*categories)
 
         modeladmin.message_user(
             request,
@@ -38,67 +55,139 @@ def add_categories(modeladmin, request, queryset):
         {
             "products": queryset,
             "categories": categories,
-            "action_checkbox_name": admin.ACTION_CHECKBOX_NAME,
-        },
+            "action_checkbox_name": admin.helpers.ACTION_CHECKBOX_NAME,
+        }
     )
 
-# 🔹 Inline изображения товаров
-class ProductImageInline(admin.TabularInline):
-    model = ProductImage
-    extra = 1
 
+# ---------- ACTION: удалить категории ----------
 
-# 🔹 Inline изображения страниц
-class PageImageInline(admin.TabularInline):
-    model = PageImage
-    extra = 1
+@admin.action(description="Удалить категории у товаров")
+def remove_categories(modeladmin, request, queryset):
 
-# Массовое назначение категории
-def assign_category(modeladmin, request, queryset):
+    if "apply" in request.POST:
 
-    if request.POST.get("apply"):
-        category_id = request.POST.get("category")
+        category_ids = request.POST.getlist("categories")
 
-        if category_id:
-            category = Category.objects.get(id=category_id)
+        categories = Category.objects.filter(id__in=category_ids)
 
-            for product in queryset:
-                product.categories.add(category)
+        for product in queryset:
+            product.categories.remove(*categories)
 
-            modeladmin.message_user(request, "Категория назначена.")
-            return HttpResponseRedirect(request.get_full_path())
+        modeladmin.message_user(
+            request,
+            f"Категории удалены у {queryset.count()} товаров"
+        )
+
+        return HttpResponseRedirect(request.get_full_path())
 
     categories = Category.objects.all()
 
-    return render(request, "admin/assign_category.html", {
-        "categories": categories,
-        "products": queryset,
-        "action_checkbox_name": admin.helpers.ACTION_CHECKBOX_NAME,
-    })
+    return render(
+        request,
+        "admin/remove_categories.html",
+        {
+            "products": queryset,
+            "categories": categories,
+            "action_checkbox_name": admin.helpers.ACTION_CHECKBOX_NAME,
+        }
+    )
 
-assign_category.short_description = "Назначить категорию"
 
-# 🔹 Админка товаров
+# ---------- ACTION: новинка ----------
+
+@admin.action(description="Сделать товары новинками")
+def mark_new(modeladmin, request, queryset):
+
+    queryset.update(is_new=True)
+
+    modeladmin.message_user(
+        request,
+        f"{queryset.count()} товаров отмечены как новинки"
+    )
+
+
+# ---------- ACTION: убрать новинку ----------
+
+@admin.action(description="Убрать отметку новинки")
+def unmark_new(modeladmin, request, queryset):
+
+    queryset.update(is_new=False)
+
+    modeladmin.message_user(
+        request,
+        f"{queryset.count()} товаров больше не новинки"
+    )
+
+
+# ---------- ACTION: скрыть цену ----------
+
+@admin.action(description="Скрыть цену")
+def hide_price(modeladmin, request, queryset):
+
+    queryset.update(hide_price=True)
+
+    modeladmin.message_user(
+        request,
+        f"Цена скрыта у {queryset.count()} товаров"
+    )
+
+
+# ---------- ACTION: показать цену ----------
+
+@admin.action(description="Показать цену")
+def show_price(modeladmin, request, queryset):
+
+    queryset.update(hide_price=False)
+
+    modeladmin.message_user(
+        request,
+        f"Цена показана у {queryset.count()} товаров"
+    )
+
+
+# ---------- PRODUCT ADMIN ----------
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'old_price', 'is_new', 'hide_price')
-    filter_horizontal = ('categories',)
-    list_filter = ('categories',)
-    search_fields = ('name',)
+
+    list_display = ("name", "price", "old_price", "is_new", "hide_price")
+
+    filter_horizontal = ("categories",)
+
+    list_filter = ("categories", "is_new")
+
+    search_fields = ("name",)
+
     inlines = [ProductImageInline]
-    actions = [assign_category]
+
+    actions = [
+        add_categories,
+        remove_categories,
+        mark_new,
+        unmark_new,
+        hide_price,
+        show_price,
+    ]
 
 
-# 🔹 Админка меню
+# ---------- MENU ----------
+
 @admin.register(MenuItem)
 class MenuItemAdmin(admin.ModelAdmin):
-    list_display = ('title', 'parent', 'order', 'is_active')
-    list_editable = ('order', 'is_active')
-    list_filter = ('parent',)
+
+    list_display = ("title", "parent", "order", "is_active")
+
+    list_editable = ("order", "is_active")
+
+    list_filter = ("parent",)
+
     prepopulated_fields = {"slug": ("title",)}
+
     inlines = [PageImageInline]
 
 
-# 🔹 Остальные модели
+# ---------- OTHER ----------
+
 admin.site.register(Category)
 admin.site.register(ProductUpload)
