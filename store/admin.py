@@ -7,27 +7,28 @@ from django.http import HttpResponseRedirect
 
 # 🔥 Action массового назначения категории
 def assign_category(modeladmin, request, queryset):
+
     if 'apply' in request.POST:
-        category_id = request.POST.get('category')
-        selected = request.POST.getlist('_selected_action')
+        category_id = request.POST.get("category")
+        category = Category.objects.get(id=category_id)
 
-        if category_id:
-            category = Category.objects.get(pk=category_id)
-            products = Product.objects.filter(pk__in=selected)
+        for product in queryset:
+            product.categories.add(category)
 
-            for product in products:
-                product.categories.add(category)
-
-            modeladmin.message_user(request, "Категория назначена.")
-            return HttpResponseRedirect(request.get_full_path())
+        modeladmin.message_user(request, "Категория назначена.")
+        return HttpResponseRedirect(request.get_full_path())
 
     categories = Category.objects.all()
 
-    return render(request, "admin/assign_category.html", {
-        "products": queryset,
-        "categories": categories,
-        "action_checkbox_name": admin.ACTION_CHECKBOX_NAME,
-    })
+    return render(
+        request,
+        'admin/assign_category.html',
+        {
+            'products': queryset,
+            'categories': categories,
+            'action_checkbox_name': admin.ACTION_CHECKBOX_NAME,
+        }
+    )
 
 assign_category.short_description = "Назначить категорию"
 
