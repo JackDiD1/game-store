@@ -1,0 +1,31 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+
+<h2>Добавить категории товарам</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <p>Выберите категории:</p>
+
+    {% for cat in categories %}
+        <div>
+            <label>
+                <input type="checkbox" name="categories" value="{{ cat.id }}">
+                {{ cat.name }}
+            </label>
+        </div>
+    {% endfor %}
+
+    {% for product in products %}
+        <input type="hidden" name="{{ action_checkbox_name }}" value="{{ product.pk }}">
+    {% endfor %}
+
+    <br>
+
+    <button type="submit" name="apply">Применить</button>
+
+</form>
+
+{% endblock %}

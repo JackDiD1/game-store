@@ -1,44 +1,46 @@
 from django.contrib import admin
 from .models import Product, Category, ProductUpload, ProductImage
 from .models import MenuItem, PageImage
-from django import forms
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
-# 🔥 Action массового назначения категории
-def assign_category(modeladmin, request, queryset):
+from django.contrib import messages
+
+@admin.action(description="Добавить категории товарам")
+def add_categories(modeladmin, request, queryset):
 
     if 'apply' in request.POST:
-        category_id = request.POST.get("category")
-        selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
 
-        if not category_id:
-            modeladmin.message_user(request, "Категория не выбрана.")
+        category_ids = request.POST.getlist("categories")
+
+        if not category_ids:
+            modeladmin.message_user(request, "Категории не выбраны", level=messages.ERROR)
             return HttpResponseRedirect(request.get_full_path())
 
-        category = Category.objects.get(id=category_id)
-        products = Product.objects.filter(pk__in=selected)
+        categories = Category.objects.filter(id__in=category_ids)
 
-        for product in products:
-            product.categories.add(category)
+        for product in queryset:
+            for category in categories:
+                product.categories.add(category)
 
-        modeladmin.message_user(request, f"Категория назначена {products.count()} товарам.")
+        modeladmin.message_user(
+            request,
+            f"Категории добавлены {queryset.count()} товарам"
+        )
+
         return HttpResponseRedirect(request.get_full_path())
 
     categories = Category.objects.all()
 
     return render(
         request,
-        "admin/assign_category.html",
+        "admin/add_categories.html",
         {
             "products": queryset,
             "categories": categories,
             "action_checkbox_name": admin.ACTION_CHECKBOX_NAME,
         },
     )
-
-assign_category.short_description = "Назначить категорию"
-
 
 # 🔹 Inline изображения товаров
 class ProductImageInline(admin.TabularInline):
@@ -51,7 +53,6 @@ class PageImageInline(admin.TabularInline):
     model = PageImage
     extra = 1
 
-
 # 🔹 Админка товаров
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -60,7 +61,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('categories',)
     search_fields = ('name',)
     inlines = [ProductImageInline]
-    actions = [assign_category]
+    actions = [add_categories]
 
 
 # 🔹 Админка меню
