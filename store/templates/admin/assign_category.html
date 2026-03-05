@@ -1,23 +1,24 @@
 {% extends "admin/base_site.html" %}
 
 {% block content %}
-
 <h2>Назначить категорию</h2>
 
 <form method="post">
-  {% csrf_token %}
+    {% csrf_token %}
 
-  <select name="category">
-      {% for category in categories %}
-          <option value="{{ category.id }}">{{ category.name }}</option>
-      {% endfor %}
-  </select>
+    <label>Категория:</label>
+    <select name="category">
+        {% for cat in categories %}
+            <option value="{{ cat.id }}">{{ cat.name }}</option>
+        {% endfor %}
+    </select>
 
-  {% for obj in queryset %}
-      <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk }}">
-  {% endfor %}
+    {% for product in products %}
+        <input type="hidden" name="{{ action_checkbox_name }}" value="{{ product.pk }}">
+    {% endfor %}
 
-  <button type="submit">Назначить категорию</button>
+    <br><br>
+    <button type="submit" name="apply">Назначить</button>
 </form>
 
 {% endblock %}

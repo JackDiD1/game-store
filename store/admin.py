@@ -10,24 +10,31 @@ def assign_category(modeladmin, request, queryset):
 
     if 'apply' in request.POST:
         category_id = request.POST.get("category")
-        category = Category.objects.get(id=category_id)
+        selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
 
-        for product in queryset:
+        if not category_id:
+            modeladmin.message_user(request, "Категория не выбрана.")
+            return HttpResponseRedirect(request.get_full_path())
+
+        category = Category.objects.get(id=category_id)
+        products = Product.objects.filter(pk__in=selected)
+
+        for product in products:
             product.categories.add(category)
 
-        modeladmin.message_user(request, "Категория назначена.")
+        modeladmin.message_user(request, f"Категория назначена {products.count()} товарам.")
         return HttpResponseRedirect(request.get_full_path())
 
     categories = Category.objects.all()
 
     return render(
         request,
-        'admin/assign_category.html',
+        "admin/assign_category.html",
         {
-            'products': queryset,
-            'categories': categories,
-            'action_checkbox_name': admin.ACTION_CHECKBOX_NAME,
-        }
+            "products": queryset,
+            "categories": categories,
+            "action_checkbox_name": admin.ACTION_CHECKBOX_NAME,
+        },
     )
 
 assign_category.short_description = "Назначить категорию"
