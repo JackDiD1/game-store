@@ -53,6 +53,31 @@ class PageImageInline(admin.TabularInline):
     model = PageImage
     extra = 1
 
+# Массовое назначение категории
+def assign_category(modeladmin, request, queryset):
+
+    if request.POST.get("apply"):
+        category_id = request.POST.get("category")
+
+        if category_id:
+            category = Category.objects.get(id=category_id)
+
+            for product in queryset:
+                product.categories.add(category)
+
+            modeladmin.message_user(request, "Категория назначена.")
+            return HttpResponseRedirect(request.get_full_path())
+
+    categories = Category.objects.all()
+
+    return render(request, "admin/assign_category.html", {
+        "categories": categories,
+        "products": queryset,
+        "action_checkbox_name": admin.helpers.ACTION_CHECKBOX_NAME,
+    })
+
+assign_category.short_description = "Назначить категорию"
+
 # 🔹 Админка товаров
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -61,7 +86,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('categories',)
     search_fields = ('name',)
     inlines = [ProductImageInline]
-    actions = [add_categories]
+    actions = [assign_category]
 
 
 # 🔹 Админка меню
